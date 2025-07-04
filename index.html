@@ -7,105 +7,26 @@
     <title>Weather Forecasting App</title>
     <!-- Include Tailwind CSS from CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body {
-            background-size: cover;
-            background-position: center;
-            transition: background-image 0.5s ease;
-        }
-    </style>
 </head>
-
-<body class="min-h-screen flex items-center justify-center p-4">
-    <div class="bg-white/90 p-6 rounded-xl shadow-2xl max-w-md w-full text-center backdrop-blur-sm">
+<body class="min-h-screen flex items-center justify-center p-4 bg-blue-100">
+    <div class="bg-blue-300 p-6 rounded-xl shadow-2xl max-w-md w-full text-center backdrop-blur-sm">
         <h1 class="text-3xl font-bold mb-6 text-gray-800">Weather</h1>
         <!-- Input and Button -->
         <div class="flex items-center justify-center gap-4 mb-6">
             <input id="cityInput" type="text" placeholder="Enter city name"
                 class="border border-gray-300 rounded-lg px-4 py-2 w-full max-w-xs focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-700" />
             <button onclick="getWeather()"
-                class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">Get Weather</button>
+                class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">Search</button>
         </div>
-
         <!-- Weather Results -->
         <div id="weatherResult" class="text-gray-700">
             <p id="message" class="text-red-500 text-lg mb-2"></p>
-            <div id="currentWeather" class="mb-6 p-4 bg-gray-100 rounded-lg"></div>
-            <h3 class="font-bold text-xl mb-4 text-gray-800">Daily Forecast</h3>
-            <div id="forecastWeather" class="flex overflow-x-auto gap-4 pb-4"></div>
+            <div id="currentWeather" class="mb-6 p-4  rounded-lg"></div>
+            <h3 class="font-bold text-xl mb-4 text-gray-800"></h3>
+            <div id="forecastWeather" class="flex overflow-x-auto gap-4 pb-4 m-3"></div>
         </div>
     </div>
-
-    <script>
-        const apiKey = "920063271f47fca58e25de02a325f364"; // Replace with your OpenWeatherMap API key
-
-        async function getWeather() {
-            const cityInput = document.getElementById("cityInput").value.trim();
-            const message = document.getElementById("message");
-            const currentWeather = document.getElementById("currentWeather");
-            const forecastWeather = document.getElementById("forecastWeather");
-
-            // Clear previous data and show loading
-            message.textContent = "";
-            currentWeather.innerHTML = "Loading...";
-            forecastWeather.innerHTML = "";
-
-            if (!cityInput) {
-                message.textContent = "Please enter a city name!";
-                currentWeather.innerHTML = "";
-                return;
-            }
-
-            try {
-                // Fetch forecast data
-                const response = await fetch(
-                    `https://api.openweathermap.org/data/2.5/forecast?q=${cityInput}&appid=${apiKey}&units=metric`
-                );
-                if (!response.ok) throw new Error("City not found or API issue");
-                const data = await response.json();
-
-                if (data.cod === "404") {
-                    message.textContent = "City not found!";
-                    currentWeather.innerHTML = "";
-                    document.body.style.backgroundImage = "url('images/default.jpg')";
-                } else {
-                    // Current weather with current time
-                    const current = data.list[0];
-                    const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-                    const weatherDesc = current.weather[0].description.toLowerCase();
-                    currentWeather.innerHTML = `
-                        <h2 class="text-4xl font-bold text-gray-800">${data.city.name}</h2>
-                        <p class="text-5xl mt-2 text-gray-700">${current.main.temp}°C</p>
-                        <p class="text-lg mt-1 text-gray-600">${current.weather[0].description}</p>
-                        <p class="text-sm mt-2 text-gray-500">Current Time: ${currentTime}</p>
-                    `;
-
-                    // Hourly forecast (3-hour intervals for ~12 hours)
-                    const hourlyForecasts = data.list.slice(0, 4); // 4 entries ≈ 12 hours at 3-hour intervals
-                    let forecastHtml = "";
-                    hourlyForecasts.forEach((forecast) => {
-                        const fullDate = new Date(forecast.dt * 1000);
-                        const date = fullDate.toLocaleDateString();
-                        const time = fullDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-                        const temp = forecast.main.temp;
-                        const desc = forecast.weather[0].description;
-                        forecastHtml += `
-                            <div class="bg-gray-100 p-3 rounded-lg min-w-[100px] shadow-md">
-                                <p class="text-xs font-semibold text-gray-700">${date} ${time}</p>
-                                <p class="text-xl mt-1 text-gray-800">${temp}°C</p>
-                                <p class="text-xs mt-1 text-gray-600">${desc}</p>
-                            </div>
-                        `;
-                    });
-                    forecastWeather.innerHTML = forecastHtml;
-                }
-            } catch (error) {
-                message.textContent = "Something went wrong!";
-                currentWeather.innerHTML = "";
-                console.error("Error:", error.message);
-            }
-        }
-    </script>
+    <script src="index.js"></script>
 </body>
 
 </html>
